@@ -47,7 +47,7 @@ def rate_limit_handler(request: Request, exc: Exception):
     )
 
 
-# ---- CORS (SAFE FOR DEV + PROD) ----
+# ---- CORS (FIXED: ALLOW GET + POST) ----
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -56,7 +56,7 @@ app.add_middleware(
         "https://www.brevanext.com",
     ],
     allow_credentials=True,
-    allow_methods=["POST"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
@@ -171,11 +171,3 @@ def save_lead(lead: LeadRequest):
     )
 
     return {"status": "ok"}
-
-
-# ---- RAILWAY ENTRYPOINT (DYNAMIC PORT) ----
-import uvicorn
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8001))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
