@@ -33,6 +33,12 @@ limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 
 
+# ---- HEALTH CHECK (REQUIRED FOR RAILWAY) ----
+@app.get("/")
+def health():
+    return {"status": "ok"}
+
+
 @app.exception_handler(RateLimitExceeded)
 def rate_limit_handler(request: Request, exc: Exception):
     return JSONResponse(
@@ -165,3 +171,11 @@ def save_lead(lead: LeadRequest):
     )
 
     return {"status": "ok"}
+
+
+# ---- RAILWAY ENTRYPOINT (DYNAMIC PORT) ----
+import uvicorn
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8001))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
