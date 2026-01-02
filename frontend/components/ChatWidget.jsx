@@ -3,6 +3,11 @@ import { useState } from "react";
 
 const MAX_MESSAGES = 6;
 
+// ✅ BACKEND URL (ENV FIRST, FALLBACK SECOND)
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://ideal-tenderness-production.up.railway.app";
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -24,7 +29,6 @@ export default function ChatWidget() {
       (m) => m.role === "user"
     ).length;
 
-    // ---- DEMO LIMIT → LEAD MODE ----
     if (userMessageCount >= MAX_MESSAGES) {
       setLeadMode(true);
       return;
@@ -37,14 +41,11 @@ export default function ChatWidget() {
     setMessages((prev) => [...prev, { role: "user", content: userText }]);
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/chat`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userText }),
-        }
-      );
+      const res = await fetch(`${API_URL}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText }),
+      });
 
       const data = await res.json();
 
@@ -70,7 +71,7 @@ export default function ChatWidget() {
     if (!email.trim()) return;
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lead`, {
+      await fetch(`${API_URL}/lead`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -94,7 +95,6 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* Floating Button */}
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -116,7 +116,6 @@ export default function ChatWidget() {
         💬
       </button>
 
-      {/* Chat Window */}
       {open && (
         <div
           style={{
@@ -125,7 +124,7 @@ export default function ChatWidget() {
             right: 20,
             width: 340,
             height: 460,
-            background: "#000000",
+            background: "#000",
             color: "#e5e7eb",
             borderRadius: 16,
             display: "flex",
@@ -134,7 +133,6 @@ export default function ChatWidget() {
             boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
           }}
         >
-          {/* Header */}
           <div
             style={{
               padding: 14,
@@ -149,7 +147,6 @@ export default function ChatWidget() {
             BrevaNext AI Assistant
           </div>
 
-          {/* Messages */}
           <div
             style={{
               flex: 1,
@@ -164,28 +161,14 @@ export default function ChatWidget() {
                 {m.content}
               </div>
             ))}
-            {loading && (
-              <div style={{ opacity: 0.6 }}>Thinking…</div>
-            )}
+            {loading && <div style={{ opacity: 0.6 }}>Thinking…</div>}
           </div>
 
-          {/* Lead Capture */}
           {leadMode && (
-            <div
-              style={{
-                padding: 12,
-                borderTop: "1px solid #1f2937",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 13,
-                  marginBottom: 8,
-                  opacity: 0.9,
-                }}
-              >
+            <div style={{ padding: 12, borderTop: "1px solid #1f2937" }}>
+              <div style={{ fontSize: 13, marginBottom: 8 }}>
                 To continue with tailored recommendations, please share your
-                work email. A BrevaNext consultant will follow up.
+                work email.
               </div>
 
               <input
@@ -220,7 +203,6 @@ export default function ChatWidget() {
             </div>
           )}
 
-          {/* Input */}
           {!leadMode && (
             <div
               style={{
