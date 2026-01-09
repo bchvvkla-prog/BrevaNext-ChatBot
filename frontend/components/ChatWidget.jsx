@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const MAX_MESSAGES = 6;
 
-// ✅ BACKEND URL (ENV FIRST, FALLBACK SECOND)
+// ✅ BACKEND URL
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://ideal-tenderness-production.up.railway.app";
@@ -82,7 +82,7 @@ export default function ChatWidget() {
         {
           role: "bot",
           content:
-            "Thank you for sharing your details. A BrevaNext consultant will review your request and follow up shortly.",
+            "Thank you! A BrevaNext consultant will follow up shortly.",
         },
       ]);
 
@@ -95,8 +95,9 @@ export default function ChatWidget() {
 
   return (
     <>
+      {/* 💬 FLOATING CHAT BUTTON */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((o) => !o)}
         style={{
           position: "fixed",
           bottom: 20,
@@ -110,29 +111,35 @@ export default function ChatWidget() {
           fontSize: 24,
           border: "none",
           cursor: "pointer",
-          zIndex: 9999,
+          zIndex: 2147483647,
         }}
+        aria-label="Open chat"
       >
         💬
       </button>
 
+      {/* 🪟 CHAT POPUP (ISOLATED – NO PAGE GLITCH) */}
       {open && (
         <div
           style={{
             position: "fixed",
             bottom: 90,
             right: 20,
-            width: 340,
-            height: 460,
-            background: "#000",
+            width: 360,
+            height: 480,
+            backgroundColor: "#000",
             color: "#e5e7eb",
             borderRadius: 16,
             display: "flex",
             flexDirection: "column",
-            zIndex: 9999,
+            zIndex: 2147483647,
             boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
+            overflow: "hidden",
+            isolation: "isolate", // 🔥 critical fix
+            pointerEvents: "auto",
           }}
         >
+          {/* HEADER */}
           <div
             style={{
               padding: 14,
@@ -140,13 +147,13 @@ export default function ChatWidget() {
                 "linear-gradient(135deg,#22d3ee,#3b82f6,#8b5cf6,#ec4899)",
               color: "#000",
               fontWeight: 700,
-              borderTopLeftRadius: 16,
-              borderTopRightRadius: 16,
+              flexShrink: 0,
             }}
           >
             BrevaNext AI Assistant
           </div>
 
+          {/* MESSAGES */}
           <div
             style={{
               flex: 1,
@@ -164,11 +171,17 @@ export default function ChatWidget() {
             {loading && <div style={{ opacity: 0.6 }}>Thinking…</div>}
           </div>
 
+          {/* LEAD CAPTURE */}
           {leadMode && (
-            <div style={{ padding: 12, borderTop: "1px solid #1f2937" }}>
+            <div
+              style={{
+                padding: 12,
+                borderTop: "1px solid #1f2937",
+                flexShrink: 0,
+              }}
+            >
               <div style={{ fontSize: 13, marginBottom: 8 }}>
-                To continue with tailored recommendations, please share your
-                work email.
+                Share your work email to continue.
               </div>
 
               <input
@@ -203,6 +216,7 @@ export default function ChatWidget() {
             </div>
           )}
 
+          {/* INPUT */}
           {!leadMode && (
             <div
               style={{
@@ -210,6 +224,7 @@ export default function ChatWidget() {
                 padding: 10,
                 gap: 6,
                 borderTop: "1px solid #1f2937",
+                flexShrink: 0,
               }}
             >
               <input
