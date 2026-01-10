@@ -95,8 +95,8 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* 💬 FLOATING CHAT BUTTON — ONLY WHEN CLOSED */}
-      {!open && (
+      {/* 💬 FLOATING BUTTON — ONLY WHEN CHAT IS CLOSED */}
+      {!open ? (
         <button
           onClick={() => setOpen(true)}
           style={{
@@ -118,10 +118,8 @@ export default function ChatWidget() {
         >
           💬
         </button>
-      )}
-
-      {/* 🪟 CHAT POPUP */}
-      {open && (
+      ) : (
+        /* 🪟 CHAT POPUP — ONLY WHEN CHAT IS OPEN */
         <div
           style={{
             position: "fixed",
@@ -151,7 +149,6 @@ export default function ChatWidget() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              flexShrink: 0,
             }}
           >
             <span>BrevaNext AI Assistant</span>
@@ -187,8 +184,8 @@ export default function ChatWidget() {
             {loading && <div style={{ opacity: 0.6 }}>Thinking…</div>}
           </div>
 
-          {/* LEAD CAPTURE */}
-          {leadMode && (
+          {/* LEAD MODE OR INPUT */}
+          {leadMode ? (
             <div
               style={{
                 padding: 12,
@@ -229,10 +226,7 @@ export default function ChatWidget() {
                 Request follow-up
               </button>
             </div>
-          )}
-
-          {/* INPUT */}
-          {!leadMode && (
+          ) : (
             <div
               style={{
                 display: "flex",
