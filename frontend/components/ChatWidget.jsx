@@ -95,30 +95,32 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* 💬 FLOATING CHAT BUTTON */}
-      <button
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          width: 58,
-          height: 58,
-          borderRadius: "50%",
-          background:
-            "linear-gradient(135deg,#22d3ee,#3b82f6,#8b5cf6,#ec4899)",
-          color: "#000",
-          fontSize: 24,
-          border: "none",
-          cursor: "pointer",
-          zIndex: 2147483647,
-        }}
-        aria-label="Open chat"
-      >
-        💬
-      </button>
+      {/* 💬 FLOATING CHAT BUTTON — ONLY WHEN CLOSED */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          style={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            width: 58,
+            height: 58,
+            borderRadius: "50%",
+            background:
+              "linear-gradient(135deg,#22d3ee,#3b82f6,#8b5cf6,#ec4899)",
+            color: "#000",
+            fontSize: 24,
+            border: "none",
+            cursor: "pointer",
+            zIndex: 2147483647,
+          }}
+          aria-label="Open chat"
+        >
+          💬
+        </button>
+      )}
 
-      {/* 🪟 CHAT POPUP (ISOLATED – NO PAGE GLITCH) */}
+      {/* 🪟 CHAT POPUP */}
       {open && (
         <div
           style={{
@@ -135,8 +137,7 @@ export default function ChatWidget() {
             zIndex: 2147483647,
             boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
             overflow: "hidden",
-            isolation: "isolate", // 🔥 critical fix
-            pointerEvents: "auto",
+            isolation: "isolate",
           }}
         >
           {/* HEADER */}
@@ -147,10 +148,25 @@ export default function ChatWidget() {
                 "linear-gradient(135deg,#22d3ee,#3b82f6,#8b5cf6,#ec4899)",
               color: "#000",
               fontWeight: 700,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
               flexShrink: 0,
             }}
           >
-            BrevaNext AI Assistant
+            <span>BrevaNext AI Assistant</span>
+            <button
+              onClick={() => setOpen(false)}
+              style={{
+                background: "transparent",
+                border: "none",
+                fontSize: 18,
+                cursor: "pointer",
+              }}
+              aria-label="Close chat"
+            >
+              ✕
+            </button>
           </div>
 
           {/* MESSAGES */}
@@ -177,7 +193,6 @@ export default function ChatWidget() {
               style={{
                 padding: 12,
                 borderTop: "1px solid #1f2937",
-                flexShrink: 0,
               }}
             >
               <div style={{ fontSize: 13, marginBottom: 8 }}>
@@ -224,7 +239,6 @@ export default function ChatWidget() {
                 padding: 10,
                 gap: 6,
                 borderTop: "1px solid #1f2937",
-                flexShrink: 0,
               }}
             >
               <input
