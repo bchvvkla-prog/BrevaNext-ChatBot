@@ -3,12 +3,12 @@ import { useState } from "react";
 
 const MAX_MESSAGES = 6;
 
-// ✅ BACKEND URL
+// BACKEND URL
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://ideal-tenderness-production.up.railway.app";
 
-export default function ChatWidget() {
+export default function ChatWidget({ embedded = false }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -93,10 +93,12 @@ export default function ChatWidget() {
     }
   }
 
+  const isOpen = embedded || open;
+
   return (
     <>
-      {/* 💬 FLOATING BUTTON — ONLY WHEN CHAT IS CLOSED */}
-      {!open ? (
+      {/* 💬 FLOATING BUTTON — WEBSITE ONLY */}
+      {!embedded && !open && (
         <button
           onClick={() => setOpen(true)}
           style={{
@@ -118,24 +120,27 @@ export default function ChatWidget() {
         >
           💬
         </button>
-      ) : (
-        /* 🪟 CHAT POPUP — ONLY WHEN CHAT IS OPEN */
+      )}
+
+      {/* 🪟 CHAT WINDOW */}
+      {isOpen && (
         <div
           style={{
-            position: "fixed",
-            bottom: 90,
-            right: 20,
-            width: 360,
-            height: 480,
+            position: embedded ? "relative" : "fixed",
+            bottom: embedded ? 0 : 90,
+            right: embedded ? 0 : 20,
+            width: embedded ? "100%" : 360,
+            height: embedded ? "100vh" : 480,
             backgroundColor: "#000",
             color: "#e5e7eb",
-            borderRadius: 16,
+            borderRadius: embedded ? 0 : 16,
             display: "flex",
             flexDirection: "column",
             zIndex: 2147483647,
-            boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
+            boxShadow: embedded
+              ? "none"
+              : "0 20px 40px rgba(0,0,0,0.6)",
             overflow: "hidden",
-            isolation: "isolate",
           }}
         >
           {/* HEADER */}
@@ -152,18 +157,19 @@ export default function ChatWidget() {
             }}
           >
             <span>BrevaNext AI Assistant</span>
-            <button
-              onClick={() => setOpen(false)}
-              style={{
-                background: "transparent",
-                border: "none",
-                fontSize: 18,
-                cursor: "pointer",
-              }}
-              aria-label="Close chat"
-            >
-              ✕
-            </button>
+            {!embedded && (
+              <button
+                onClick={() => setOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  fontSize: 18,
+                  cursor: "pointer",
+                }}
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           {/* MESSAGES */}
@@ -184,18 +190,12 @@ export default function ChatWidget() {
             {loading && <div style={{ opacity: 0.6 }}>Thinking…</div>}
           </div>
 
-          {/* LEAD MODE OR INPUT */}
+          {/* LEAD OR INPUT */}
           {leadMode ? (
-            <div
-              style={{
-                padding: 12,
-                borderTop: "1px solid #1f2937",
-              }}
-            >
+            <div style={{ padding: 12, borderTop: "1px solid #1f2937" }}>
               <div style={{ fontSize: 13, marginBottom: 8 }}>
                 Share your work email to continue.
               </div>
-
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -208,7 +208,6 @@ export default function ChatWidget() {
                   marginBottom: 8,
                 }}
               />
-
               <button
                 onClick={submitLead}
                 style={{
@@ -232,7 +231,7 @@ export default function ChatWidget() {
                 display: "flex",
                 padding: 10,
                 gap: 6,
-                borderTop: "1px solid #1f2937",
+                borderTop: "1f2937",
               }}
             >
               <input
