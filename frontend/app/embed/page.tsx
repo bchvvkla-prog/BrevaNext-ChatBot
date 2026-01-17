@@ -11,6 +11,7 @@ export default function EmbedPage() {
         overflow: "hidden",
       }}
     >
+      {/* 👇 embedded=true disables launcher */}
       <ChatWidget embedded />
     </div>
   );
