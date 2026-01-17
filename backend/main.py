@@ -21,7 +21,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 
-# ---- COST CONTROL CONSTANT ----
+# ---- COST CONTROL ----
 MAX_CHARS = 800
 
 
@@ -39,6 +39,7 @@ def health():
     return {"status": "ok"}
 
 
+# ---- RATE LIMIT HANDLER ----
 @app.exception_handler(RateLimitExceeded)
 def rate_limit_handler(request: Request, exc: Exception):
     return JSONResponse(
@@ -47,16 +48,17 @@ def rate_limit_handler(request: Request, exc: Exception):
     )
 
 
-# ---- CORS (FIXED: ALLOW GET + POST) ----
+# ---- CORS (FINAL + FIXED) ----
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
+        "https://breva-next-chat-bot.vercel.app",
         "https://brevanext.com",
         "https://www.brevanext.com",
     ],
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -75,7 +77,7 @@ class LeadRequest(BaseModel):
     business_type: str | None = None
 
 
-# ---- EMAIL HELPER (SMTP) ----
+# ---- EMAIL HELPER ----
 def send_lead_email(email: str, business_type: str | None, timestamp: str):
     msg = EmailMessage()
     msg["Subject"] = "New BrevaNext Chatbot Lead"
@@ -163,7 +165,7 @@ def save_lead(lead: LeadRequest):
     with open("leads.json", "a") as f:
         f.write(json.dumps(lead_data) + "\n")
 
-    # Send email notification
+    # Send email
     send_lead_email(
         lead.email,
         lead.business_type,
