@@ -22,6 +22,8 @@ export default function ChatWidget({ embedded = false }) {
   const [leadMode, setLeadMode] = useState(false);
   const [email, setEmail] = useState("");
 
+  const isOpen = embedded || open;
+
   async function sendMessage() {
     if (!input.trim() || leadMode) return;
 
@@ -93,8 +95,6 @@ export default function ChatWidget({ embedded = false }) {
     }
   }
 
-  const isOpen = embedded || open;
-
   return (
     <>
       {/* 💬 FLOATING BUTTON — WEBSITE ONLY */}
@@ -116,7 +116,6 @@ export default function ChatWidget({ embedded = false }) {
             cursor: "pointer",
             zIndex: 2147483647,
           }}
-          aria-label="Open chat"
         >
           💬
         </button>
@@ -143,21 +142,21 @@ export default function ChatWidget({ embedded = false }) {
             overflow: "hidden",
           }}
         >
-          {/* HEADER */}
-          <div
-            style={{
-              padding: 14,
-              background:
-                "linear-gradient(135deg,#22d3ee,#3b82f6,#8b5cf6,#ec4899)",
-              color: "#000",
-              fontWeight: 700,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span>BrevaNext AI Assistant</span>
-            {!embedded && (
+          {/* HEADER — WEBSITE ONLY */}
+          {!embedded && (
+            <div
+              style={{
+                padding: 14,
+                background:
+                  "linear-gradient(135deg,#22d3ee,#3b82f6,#8b5cf6,#ec4899)",
+                color: "#000",
+                fontWeight: 700,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>BrevaNext AI Assistant</span>
               <button
                 onClick={() => setOpen(false)}
                 style={{
@@ -169,8 +168,8 @@ export default function ChatWidget({ embedded = false }) {
               >
                 ✕
               </button>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* MESSAGES */}
           <div
@@ -190,12 +189,9 @@ export default function ChatWidget({ embedded = false }) {
             {loading && <div style={{ opacity: 0.6 }}>Thinking…</div>}
           </div>
 
-          {/* LEAD OR INPUT */}
+          {/* LEAD / INPUT */}
           {leadMode ? (
             <div style={{ padding: 12, borderTop: "1px solid #1f2937" }}>
-              <div style={{ fontSize: 13, marginBottom: 8 }}>
-                Share your work email to continue.
-              </div>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -219,7 +215,6 @@ export default function ChatWidget({ embedded = false }) {
                   color: "#000",
                   fontWeight: 600,
                   border: "none",
-                  cursor: "pointer",
                 }}
               >
                 Request follow-up
@@ -231,7 +226,7 @@ export default function ChatWidget({ embedded = false }) {
                 display: "flex",
                 padding: 10,
                 gap: 6,
-                borderTop: "1f2937",
+                borderTop: "1px solid #1f2937",
               }}
             >
               <input
@@ -252,7 +247,6 @@ export default function ChatWidget({ embedded = false }) {
                   padding: "8px 14px",
                   borderRadius: 8,
                   border: "none",
-                  cursor: "pointer",
                   background: "#111827",
                   color: "#e5e7eb",
                 }}
